@@ -236,9 +236,6 @@
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="ErrorHandler\AiHandleErrorAttribute.cs" />
-    <Compile Include="GenerateModels\DTOs\NewsPrenimiumsDTO.cs" />
-    <Compile Include="GenerateModels\DTOs\UserDTO.cs" />
-    <Compile Include="GenerateModels\NewsDbContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -247,7 +244,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DbEntities.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\HomeModel.cs" />
+    <Compile Include="Models\EntitiesModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\BrowserConfig\BrowserConfigService.cs" />
     <Compile Include="Services\BrowserConfig\IBrowserConfigService.cs" />

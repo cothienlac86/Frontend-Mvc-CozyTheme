@@ -10,9 +10,9 @@
     using Boilerplate.Web.Mvc.Filters;
     using Constants;
     using Services;
-    using GenerateModels;
+
     using System.Configuration;
-    using Frontend_SercuIntegraded.Models;
+    using Models;
 
     public class HomeController : Controller
     {
@@ -25,7 +25,7 @@
         readonly IOpenSearchService openSearchService;
         readonly IRobotsService robotsService;
         readonly ISitemapService sitemapService;
-        readonly NewsDbContext _dbContext;
+        readonly FrontendDbContext _dbContext;
 
         #endregion Private Fields
 
@@ -49,7 +49,7 @@
             {
                 if (string.IsNullOrEmpty(NewsConnectionString))
                     throw new System.Exception("Connection string is not corrected....");
-                _dbContext = new NewsDbContext(NewsConnectionString);
+                _dbContext = new FrontendDbContext(NewsConnectionString);
             }
         }
 
@@ -106,11 +106,15 @@
         }
 
         [Route("", Name = HomeControllerRoute.GetIndex)]
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
-            //var lstNews = await dbContext.TblPrivateNews.FindAsync();
-            var lstArea = _dbContext.GetArea();
-            ViewBag.LstArea = lstArea;
+            var lstAreaParent = _dbContext.GetArea();
+            var defaultCity = new GetAreaReturnModel();
+            defaultCity.Id = 0;
+            defaultCity.Name = "Thành Phố";
+            defaultCity.ParentId = null;
+            lstAreaParent.Insert(0, defaultCity);
+            ViewBag.LstArea = lstAreaParent;
             return this.View(HomeControllerAction.Index);
         }
         /// <summary>
@@ -210,7 +214,7 @@
         }
 
         [HttpPost]
-        public ActionResult HouseFiltered(SearchTblPrivateNewsReturnModel _propertiesFilter)
+        public ActionResult HouseFiltered(Models.SearchTblPrivateNewsReturnModel _propertiesFilter)
         {
             if (_propertiesFilter == null)
                 return View("Filters parameters does not correctly...");
