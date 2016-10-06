@@ -1,5 +1,4 @@
-﻿@model Frontend_SercuIntegraded.Models.TblPrivateNew
-
+﻿@using Frontend_SercuIntegraded.Models
 @{
     // title - The title of the page which appears in the browser window title. Aim for the title to be less than 70
     //         characters. The site name appears at the end for better SEO.
@@ -26,8 +25,13 @@
         Determiner = OpenGraphDeterminer.Blank,
         SiteName = Application.Name
     };
+    List<GetAreaReturnModel> lstAreaParent = null;
+    if (ViewBag.LstArea != null)
+    {
+        lstAreaParent = (List<GetAreaReturnModel>)ViewBag.LstArea;
+    }
 }
-
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
@@ -36,7 +40,7 @@
                 @using (Html.BeginForm("HouseFiltered", "Home", FormMethod.Post))
                 {
                     <div class="form-control-large" style="width:80%;">
-                        @Html.TextBoxFor(m => m.Title, new { @class = "form-control", @name = "location", @placeholder = @"Nhập tiêu đề, nội dung, hoặc số điện thoại đăng tin để tìm ..." })
+                        <input type="text" class="form-control" name="txtMultiFilters" data-placeholder="Nhập tiêu đề, nội dung, hoặc số điện thoại đăng tin để tìm ..." />
                     </div>
                     <button type="submit" class="btn btn-fullcolor" style="width:10%;">Search</button>
                     <div class="form-control-small" style="width:20%;">
@@ -49,17 +53,12 @@
                             <option value="4">4</option>
                             <option value="5">5</option>
                         </select>
-                        @*@Html.DropDownListFor(m => m.)*@
+
                     </div>
 
                     <div class="form-control-small">
-                        <select id="search_prop_type" name="search_prop_type" data-placeholder="Thành phố">
-                            <option value=""> </option>
-                            <option value="hcm">TP. Hồ Chí Minh</option>
-                            <option value="hn">TP. Hà Nội</option>
-                            <option value="hp">TP. Hải Phòng</option>
-                            <option value="etc">...</option>
-                        </select>
+                        @Html.DropDownList("search_prop_type",
+                       new SelectList(lstAreaParent.Select(x => new { Value = x.Id, Text = x.Name }), "Value", "Text"), new { @class = "form-control", @dataplaceholder = "Thanh Pho" })
                     </div>
                     <div class="form-control-small">
                         <select id="search_status" name="search_status" data-placeholder="Quận huyện">
@@ -109,3 +108,35 @@
             </div>
         </div>
     </div>
+    <script type="text/javascript">
+        $(function () {
+            $('.txtCity').on('change', function () {
+                var parentId = $('.txtCity').val();
+                if (parentId == 0)
+                    return;
+                ajaxPostFilterDistLst(parentId);
+            });
+
+            function ajaxPostFilterDistLst(parentId) {
+                var $form = $(btnClicked).parents('form');
+
+                $.ajax({
+                    type: "POST",
+                    url: $form.attr('action'),
+                    data: $form.serialize(),
+                    error: function (xhr, status, error) {
+                        //do something about the error
+                    },
+                    success: function (response) {
+                        //do something with response
+                        console.log(JSON.stringify(response));
+                    }
+                });
+                return false;// if it's a link to prevent post
+
+            }
+        });
+
+
+    </script>
+</div>
